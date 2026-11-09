@@ -79,6 +79,11 @@ function discoverBranches() {
       cleanName = cleanName.replace('origin/', '');
     }
 
+    if (!cleanName || cleanName === 'origin' || cleanName === 'HEAD') continue;
+
+    // Verify ref exists in git
+    if (!runGit(`git rev-parse --verify "${b}"`)) continue;
+
     if (cleanName === 'main' || cleanName === 'master') {
       if (!branchMap.has('main') || b === 'main') {
         branchMap.set('main', { ref: b, name: 'main', isMain: true });
