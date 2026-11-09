@@ -20,14 +20,17 @@
 
     if (!config) {
       // Fallback configuration if not embedded
-      const isSubpage = window.location.pathname.includes('/Enhancement');
+      const pathParts = window.location.pathname.split('/').filter(Boolean);
+      const isSubpage = pathParts.length > 1 && pathParts[pathParts.length - 1] !== 'index.html';
+      const branchName = isSubpage ? pathParts[pathParts.length - 1] : 'main';
       config = {
-        currentBranch: isSubpage ? 'Enhancement' : 'main',
-        isMain: !isSubpage,
+        currentBranch: branchName,
+        isMain: branchName === 'main',
         basePath: isSubpage ? '../' : './',
         branches: [
           { name: 'main', isMain: true, path: isSubpage ? '../' : './' },
-          { name: 'Enhancement', isMain: false, path: isSubpage ? './' : './Enhancement/' }
+          { name: 'Enhancement', isMain: false, path: isSubpage ? '../Enhancement/' : './Enhancement/' },
+          { name: 'responsive-ui', isMain: false, path: isSubpage ? '../responsive-ui/' : './responsive-ui/' }
         ],
         repoUrl: 'https://github.com/someonenameguy/CosyUI'
       };
