@@ -1,3 +1,8 @@
+![](https://img.shields.io/badge/AI-EXECUTE-grey?style=flat&logoSize=auto&labelColor=13171f)
+<picture>
+<source srcset="https://github.com/NamtaoProductions/0rwx.com/blob/main/static/AI-X-dark.svg" media="(prefers-color-scheme: dark)">
+<img src="https://github.com/NamtaoProductions/0rwx.com/blob/main/static/AI-X-light.svg" alt="AI:X" width="auto" height="32">
+</picture>
 # CosyUI ⚡
 
 > **A lightweight, zero-dependency, web-native visual programming workspace for creating, testing, and playing LLM-powered games, workflows, and custom user interfaces.**
