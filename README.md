@@ -16,6 +16,19 @@
 
 ---
 
+## 🌐 Live GitHub Pages & Branch Sub-Pages
+
+CosyUI is automatically deployed to **GitHub Pages** using GitHub Actions:
+
+- **🏠 Main Index (Default)**: [https://someonenameguy.github.io/CosyUI/](https://someonenameguy.github.io/CosyUI/)
+- **🌿 Branch Sub-Pages**: Every branch is deployed to its own isolated subpage, for example:
+  - **`Enhancement`**: [https://someonenameguy.github.io/CosyUI/Enhancement/](https://someonenameguy.github.io/CosyUI/Enhancement/)
+- **📂 Branch Directory & Deployment Hub**: [https://someonenameguy.github.io/CosyUI/branches.html](https://someonenameguy.github.io/CosyUI/branches.html)
+
+Pushing changes to `main` updates the root index, while pushing to any other branch automatically builds and provisions its own sub-page with an integrated branch switcher widget.
+
+---
+
 ## 🚀 Quick Start (60 Seconds)
 
 1. Open `index.html` in any modern web browser (Chrome, Firefox, Safari, Edge).

@@ -1,0 +1,308 @@
+/* ==========================================================================
+   CosyUI Branch Switcher & Sub-page Navigation Widget
+   Zero-dependency, clean dark theme matching CosyUI design system
+   ========================================================================== */
+
+.cosy-branch-container {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 1000;
+}
+
+/* When placed in header */
+.cosy-header .cosy-branch-container {
+  margin-left: 4px;
+}
+
+/* Floating fallback if not inside header */
+.cosy-branch-container.cosy-branch-floating {
+  position: fixed;
+  bottom: 20px;
+  right: 190px; /* offset from minimap */
+  z-index: 9999;
+}
+
+.cosy-branch-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--cosy-bg-surface-elevated, #202433);
+  border: 1px solid var(--cosy-border, #31374c);
+  border-radius: 6px;
+  color: var(--cosy-text-main, #e2e8f0);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.cosy-branch-trigger:hover {
+  background: var(--cosy-bg-card, #272d40);
+  border-color: var(--cosy-accent, #8b5cf6);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.25);
+}
+
+.cosy-branch-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.cosy-branch-name {
+  font-weight: 600;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cosy-branch-caret {
+  font-size: 10px;
+  color: var(--cosy-text-muted, #7e8b9f);
+  transition: transform 0.15s ease;
+}
+
+.cosy-branch-container.is-open .cosy-branch-caret {
+  transform: rotate(180deg);
+}
+
+.cosy-branch-pill-badge {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.cosy-branch-pill-badge.main-badge {
+  background: rgba(34, 197, 94, 0.18);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.cosy-branch-pill-badge.sub-badge {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+}
+
+/* Dropdown Menu */
+.cosy-branch-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 300px;
+  max-width: 360px;
+  background: #181b26;
+  border: 1px solid #33394f;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  z-index: 10001;
+  padding: 6px;
+  display: none;
+  animation: cosyFadeIn 0.15s ease-out;
+}
+
+/* Position adjustment if near right screen edge */
+.cosy-branch-floating .cosy-branch-menu {
+  top: auto;
+  bottom: calc(100% + 6px);
+  left: auto;
+  right: 0;
+}
+
+.cosy-branch-container.is-open .cosy-branch-menu {
+  display: block;
+}
+
+@keyframes cosyFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cosy-branch-menu-header {
+  padding: 6px 10px 8px;
+  border-bottom: 1px solid #282e42;
+  margin-bottom: 4px;
+}
+
+.cosy-branch-menu-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cosy-branch-menu-desc {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.cosy-branch-menu-list {
+  max-height: 250px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cosy-branch-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #cbd5e1;
+  font-size: 12px;
+  transition: all 0.12s ease;
+  margin-bottom: 2px;
+}
+
+.cosy-branch-item:hover {
+  background: #23293c;
+  color: #ffffff;
+}
+
+.cosy-branch-item.is-current {
+  background: rgba(139, 92, 246, 0.16);
+  color: #f1f5f9;
+  font-weight: 600;
+  border: 1px solid rgba(139, 92, 246, 0.35);
+}
+
+.cosy-branch-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.cosy-branch-item-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.cosy-branch-item-meta {
+  font-size: 10px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+}
+
+.cosy-branch-item-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.cosy-branch-menu-footer {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #282e42;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.cosy-branch-menu-footer a {
+  color: #a78bfa;
+  font-size: 11px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background 0.12s ease;
+}
+
+.cosy-branch-menu-footer a:hover {
+  color: #c084fc;
+  background: rgba(167, 139, 250, 0.12);
+}
+
+/* Sub-page top notice banner for branch subpages */
+.cosy-subpage-banner {
+  background: linear-gradient(90deg, #1e1b4b 0%, #2e1065 50%, #1e1b4b 100%);
+  border-bottom: 1px solid #6366f1;
+  color: #e0e7ff;
+  padding: 6px 16px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 999999;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.cosy-subpage-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cosy-subpage-banner-badge {
+  background: #6366f1;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cosy-subpage-banner a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 1px dotted #38bdf8;
+  transition: color 0.12s;
+}
+
+.cosy-subpage-banner a:hover {
+  color: #7dd3fc;
+  border-bottom-style: solid;
+}
+
+.cosy-subpage-banner-close {
+  background: transparent;
+  border: none;
+  color: #a5b4fc;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 6px;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.cosy-subpage-banner-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
