@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CosyUI - Visual LLM Workflows & Game Engine</title>
+  <meta name="description" content="A lightweight, zero-dependency node-based web workspace for designing LLM workflows, interactive games, and custom player frontends.">
+  <link rel="stylesheet" href="css/cosy-theme.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/graph.css">
+  <link rel="stylesheet" href="css/player.css">
+</head>
+<body class="theme-default">
+  <div id="app" class="mode-split">
+    
+    <!-- Top Application Header -->
+    <header class="cosy-header">
+      <div class="header-left">
+        <div class="cosy-brand">
+          <div class="brand-icon">⚡</div>
+          <span>CosyUI</span>
+          <span class="brand-badge">Node LLM</span>
+        </div>
+        <input type="text" id="projectTitle" class="project-title-input" value="Fantasy RPG Encounter" title="Click to rename project">
+      </div>
+
+      <div class="header-center">
+        <!-- View Mode Segmented Controls -->
+        <div class="segmented-control" role="group" aria-label="View Mode">
+          <button id="viewBtnEditor" class="segment-btn" title="Editor View (Ctrl+1)">
+            <span>📐</span> Editor
+          </button>
+          <button id="viewBtnSplit" class="segment-btn active" title="Split View (Ctrl+2)">
+            <span>⚖️</span> Split
+          </button>
+          <button id="viewBtnPlayer" class="segment-btn" title="Player View (Ctrl+3)">
+            <span>🎮</span> Player
+          </button>
+        </div>
+
+        <!-- Template Selector -->
+        <select id="templateSelector" class="cosy-select" title="Load Starter Template">
+          <option value="" disabled selected>📂 Templates...</option>
+          <option value="template_rpg">🎲 Fantasy RPG with Dice & Inventory</option>
+          <option value="template_debate">🗣️ Multi-Agent AI Debate</option>
+          <option value="template_support">🛡️ Customer Support with Guardrails</option>
+          <option value="template_story">📖 Sci-Fi Interactive Story</option>
+        </select>
+      </div>
+
+      <div class="header-right">
+        <!-- Run / Step Trigger -->
+        <button id="btnRunTrigger" class="cosy-btn primary" title="Trigger execution from Start nodes (Space / Enter)">
+          <span>▶</span> Run Graph
+        </button>
+
+        <button id="btnOpenAddPalette" class="cosy-btn" title="Add Node (Space on canvas)">
+          <span>+</span> Add Node
+        </button>
+
+        <!-- Project & Settings Controls -->
+        <button id="btnStorageModal" class="cosy-btn" title="Save, Load & Export Project">
+          <span>💾</span> Project
+        </button>
+        <button id="btnSettingsModal" class="cosy-btn icon-only" title="API Keys & LLM Settings">
+          <span>⚙️</span>
+        </button>
+        <button id="btnHelpModal" class="cosy-btn icon-only" title="Keyboard Shortcuts & Documentation">
+          <span>❓</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace Viewport -->
+    <main class="cosy-workspace">
+      
+      <!-- Graph Canvas Pane (Backend Visual Logic) -->
+      <section id="graphPane" class="graph-pane">
+        <div id="canvasContainer" class="graph-canvas-container">
+          <!-- World Transform Layer -->
+          <div id="graphWorld" class="graph-world">
+            <!-- SVG Cables Layer -->
+            <svg id="svgLayer" class="graph-svg-layer">
+              <defs>
+                <filter id="cableGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <g id="svgConnectionsGroup"></g>
+              <path id="svgDraftCable" class="graph-draft-cable" d="" style="display: none;"></path>
+            </svg>
+
+            <!-- DOM Nodes Layer -->
+            <div id="nodesLayer" class="graph-nodes-layer"></div>
+          </div>
+        </div>
+
+        <!-- Graph Canvas Floating Toolbar -->
+        <div class="graph-toolbar">
+          <button id="toolBtnZoomIn" class="graph-tool-btn" title="Zoom In (+)">➕</button>
+          <button id="toolBtnZoomOut" class="graph-tool-btn" title="Zoom Out (-)">➖</button>
+          <button id="toolBtnFit" class="graph-tool-btn" title="Fit All Nodes to View (F)">⛶</button>
+          <button id="toolBtnCenter" class="graph-tool-btn" title="Reset View (0)">🎯</button>
+          <button id="toolBtnClear" class="graph-tool-btn" title="Clear Canvas">🗑️</button>
+        </div>
+
+        <!-- Minimap Radar View -->
+        <div id="minimap" class="graph-minimap" title="Minimap (Click to pan)">
+          <canvas id="minimapCanvas"></canvas>
+          <div id="minimapViewport" class="minimap-viewport-box"></div>
+        </div>
+
+        <!-- Quick Search Add Node Palette (Hidden by default) -->
+        <div id="nodeSearchPalette" class="node-search-palette" style="display: none;">
+          <div class="palette-search-box">
+            <span>🔍</span>
+            <input type="text" id="paletteSearchInput" class="palette-search-input" placeholder="Search nodes... (e.g. LLM, Dice, Chat)" autocomplete="off">
+          </div>
+          <div id="paletteCategoryTabs" class="palette-category-tabs">
+            <button class="palette-tab active" data-category="all">All</button>
+            <button class="palette-tab" data-category="flow">Flow</button>
+            <button class="palette-tab" data-category="llm">LLM</button>
+            <button class="palette-tab" data-category="ui">UI Widgets</button>
+            <button class="palette-tab" data-category="game">Game Logic</button>
+            <button class="palette-tab" data-category="utils">Utils</button>
+          </div>
+          <div id="paletteResultsList" class="palette-results-list"></div>
+        </div>
+      </section>
+
+      <!-- Draggable Splitter Divider -->
+      <div id="paneResizer" class="pane-resizer" title="Drag to resize panels"></div>
+
+      <!-- Player Pane (Custom Frontend UI) -->
+      <section id="playerPane" class="player-pane">
+        <div class="player-topbar">
+          <div class="player-status-badge">
+            <span id="playerStatusDot" class="status-dot"></span>
+            <span id="playerStatusText">Player Ready</span>
+          </div>
+          <div class="player-actions">
+            <button id="btnRestartPlayer" class="cosy-btn" title="Reset Game / Clear State">
+              <span>🔄</span> Restart
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic UI Nodes Mount Target -->
+        <div id="playerContent" class="player-content">
+          <!-- Dynamically populated by UI Nodes in the graph -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Modal: API Settings & Providers -->
+    <div id="modalSettings" class="cosy-modal-backdrop">
+      <div class="cosy-modal">
+        <div class="modal-header">
+          <h3 class="modal-title">⚙️ LLM APIs & Provider Settings</h3>
+          <button class="modal-close-btn" data-close="modalSettings">✕</button>
+        </div>
+        <div class="modal-body">
+          <p style="margin-bottom: 14px; color: var(--cosy-text-muted);">
+            CosyUI runs 100% in your browser. API keys are stored locally on your device and never sent to external tracking servers.
+          </p>
+
+          <div class="form-group">
+            <label class="form-label" for="settingDefaultProvider">Default Provider</label>
+            <select id="settingDefaultProvider" class="cosy-select" style="width: 100%;">
+              <option value="mock">Offline Mock Simulator (Zero Cost & Offline Testing)</option>
+              <option value="openai">OpenAI (GPT-4o, GPT-4o-mini)</option>
+              <option value="anthropic">Anthropic (Claude 3.5 Sonnet)</option>
+              <option value="openrouter">OpenRouter (Unified API)</option>
+              <option value="ollama">Ollama Local Server (localhost:11434)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="settingOpenAiKey">OpenAI API Key</label>
+            <input type="password" id="settingOpenAiKey" class="form-input" placeholder="sk-...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="settingAnthropicKey">Anthropic API Key</label>
+            <input type="password" id="settingAnthropicKey" class="form-input" placeholder="sk-ant-...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="settingOpenRouterKey">OpenRouter API Key</label>
+            <input type="password" id="settingOpenRouterKey" class="form-input" placeholder="sk-or-...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="settingOllamaUrl">Ollama Server Endpoint</label>
+            <input type="text" id="settingOllamaUrl" class="form-input" value="http://localhost:11434">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <input type="checkbox" id="settingMockFallback" checked style="margin-right: 6px;">
+              Auto-fallback to Mock LLM on Network/API error
+            </label>
+            <p class="form-hint">Allows uninterrupted testing even if you hit rate limits, lack network access, or have no API keys configured.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="cosy-btn primary" id="btnSaveSettings">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Storage, Save/Load & Bundler -->
+    <div id="modalStorage" class="cosy-modal-backdrop">
+      <div class="cosy-modal">
+        <div class="modal-header">
+          <h3 class="modal-title">💾 Project Storage & Export</h3>
+          <button class="modal-close-btn" data-close="modalStorage">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Browser LocalStorage Slots</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <select id="storageSlotSelect" class="cosy-select" style="flex: 1;">
+                <option value="slot_1">Slot 1: Default Project</option>
+                <option value="slot_2">Slot 2: Empty</option>
+                <option value="slot_3">Slot 3: Empty</option>
+                <option value="slot_4">Slot 4: Empty</option>
+                <option value="slot_5">Slot 5: Empty</option>
+              </select>
+              <button id="btnSaveSlot" class="cosy-btn primary">Save</button>
+              <button id="btnLoadSlot" class="cosy-btn">Load</button>
+            </div>
+            <p class="form-hint" id="storageAutosaveStatus">Autosave is enabled to current slot.</p>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--cosy-border); margin: 16px 0;">
+
+          <div class="form-group">
+            <label class="form-label">Import / Export JSON</label>
+            <div style="display: flex; gap: 8px;">
+              <button id="btnExportJson" class="cosy-btn" style="flex: 1;">
+                <span>📥</span> Export Project JSON
+              </button>
+              <label class="cosy-btn" style="flex: 1; justify-content: center; cursor: pointer;">
+                <span>📤</span> Import JSON
+                <input type="file" id="importJsonFileInput" accept=".json" style="display: none;">
+              </label>
+            </div>
+            <p class="form-hint">Exports project structure, nodes, connections, variables, and player UI layouts. API keys are scrubbed automatically.</p>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--cosy-border); margin: 16px 0;">
+
+          <div class="form-group">
+            <label class="form-label">Single-File Standalone HTML Bundle</label>
+            <button id="btnExportBundle" class="cosy-btn primary" style="width: 100%; justify-content: center;">
+              <span>📦</span> Export Standalone Playable Game (.html)
+            </button>
+            <p class="form-hint">Generates an independent, self-contained single `.html` file embedding your project, custom Player UI, and offline runtime. Runs anywhere without a server!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Help, Shortcuts & Node Reference -->
+    <div id="modalHelp" class="cosy-modal-backdrop">
+      <div class="cosy-modal" style="max-width: 680px;">
+        <div class="modal-header">
+          <h3 class="modal-title">❓ CosyUI Guide & Node Dictionary</h3>
+          <button class="modal-close-btn" data-close="modalHelp">✕</button>
+        </div>
+        <div class="modal-body" style="max-height: 70vh;">
+          <h4 style="color: var(--cosy-accent); margin-bottom: 8px;">Quick Start Guide</h4>
+          <p style="margin-bottom: 12px;">
+            CosyUI combines a <strong>Visual Logic Graph</strong> (backend) with a <strong>Dynamic Player UI</strong> (frontend):
+          </p>
+          <ul style="margin-left: 20px; margin-bottom: 16px; line-height: 1.6;">
+            <li><strong>Nodes</strong> represent operations: user inputs, prompt builders, LLMs, dice rollers, stat bars, and chatboxes.</li>
+            <li><strong>Trigger Sockets (Orange)</strong> control execution flow (when nodes execute).</li>
+            <li><strong>Data Sockets (Colored)</strong> pass data (text, numbers, JSON, inventory items).</li>
+            <li><strong>UI Nodes</strong> automatically mount onto the Player View to customize the game UI.</li>
+          </ul>
+
+          <h4 style="color: var(--cosy-accent); margin-bottom: 8px;">Keyboard & Mouse Shortcuts</h4>
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 16px;">
+            <tr style="border-bottom: 1px solid var(--cosy-border);"><td style="padding: 6px;"><code>Space</code> or Double Click</td><td style="padding: 6px;">Open Quick-Add Node Palette</td></tr>
+            <tr style="border-bottom: 1px solid var(--cosy-border);"><td style="padding: 6px;">Left Drag on Canvas</td><td style="padding: 6px;">Pan canvas viewport</td></tr>
+            <tr style="border-bottom: 1px solid var(--cosy-border);"><td style="padding: 6px;">Scroll Wheel</td><td style="padding: 6px;">Smooth zoom at mouse cursor</td></tr>
+            <tr style="border-bottom: 1px solid var(--cosy-border);"><td style="padding: 6px;"><code>F</code></td><td style="padding: 6px;">Fit all nodes to view</td></tr>
+            <tr style="border-bottom: 1px solid var(--cosy-border);"><td style="padding: 6px;"><code>Delete</code> / <code>Backspace</code></td><td style="padding: 6px;">Delete selected node(s)</td></tr>
+            <tr style="border-bottom: 1px solid var(--cosy-border);"><td style="padding: 6px;"><code>Ctrl+1</code>, <code>Ctrl+2</code>, <code>Ctrl+3</code></td><td style="padding: 6px;">Switch Editor / Split / Player views</td></tr>
+            <tr style="border-bottom: 1px solid var(--cosy-border);"><td style="padding: 6px;">Click on Cable</td><td style="padding: 6px;">Select and delete connection</td></tr>
+          </table>
+
+          <h4 style="color: var(--cosy-accent); margin-bottom: 8px;">Starter Templates</h4>
+          <p style="line-height: 1.5;">
+            Use the <strong>Templates dropdown</strong> in the top header to instantly load complete working examples including a Fantasy RPG with dice and inventory, an AI debate show, and a customer support bot with guardrails.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications Target -->
+    <div id="toastContainer" class="cosy-toast-container"></div>
+
+  </div>
+
+  <!-- Main JavaScript Application Bootstrap -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

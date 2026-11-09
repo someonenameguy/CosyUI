@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CosyUI - Automated Test Suite Dashboard</title>
+  <link rel="stylesheet" href="../css/cosy-theme.css">
+  <style>
+    body {
+      background: var(--cosy-bg-base);
+      color: var(--cosy-text-main);
+      font-family: var(--cosy-font-sans);
+      padding: 30px;
+      line-height: 1.5;
+    }
+    .test-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--cosy-bg-surface);
+      border: 1px solid var(--cosy-border);
+      border-radius: var(--cosy-radius-lg);
+      padding: 24px;
+      box-shadow: var(--cosy-shadow-card);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--cosy-border);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    .status-pill {
+      padding: 4px 12px;
+      border-radius: var(--cosy-radius-round);
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--cosy-bg-surface-elevated);
+      color: var(--cosy-accent);
+      border: 1px solid var(--cosy-border);
+    }
+    .suite-card {
+      background: var(--cosy-bg-card);
+      border: 1px solid var(--cosy-border);
+      border-radius: var(--cosy-radius-md);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .suite-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--cosy-accent);
+      margin-bottom: 10px;
+    }
+    .test-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .test-row:last-child { border-bottom: none; }
+    .badge-pass { color: var(--cosy-success); font-weight: 600; }
+    .badge-fail { color: var(--cosy-danger); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="header">
+      <div>
+        <h2 style="display:flex; align-items:center; gap:8px;">⚡ CosyUI Test Dashboard</h2>
+        <p style="font-size:12px; color:var(--cosy-text-muted);">Zero-Dependency Automated Test Harness</p>
+      </div>
+      <div id="testStatus" class="status-pill">Running tests...</div>
+    </div>
+    <div id="resultsList"></div>
+  </div>
+
+  <script type="module">
+    import { CosyTestRunner } from './test-framework.js';
+    import { MathUtils } from '../js/utils/math.js';
+    import { Sanitizer } from '../js/utils/sanitizer.js';
+    import { GraphModel } from '../js/engine/graph-model.js';
+    import { GameLogicEngine } from '../js/engine/game-logic.js';
+    import { UniversalLLMClient } from '../js/engine/llm-client.js';
+    import { NodeRegistry } from '../js/nodes/node-definitions.js';
+    import { ProjectTemplates } from '../js/storage/templates.js';
+
+    const runner = new CosyTestRunner();
+    const resultsList = document.getElementById('resultsList');
+    const statusEl = document.getElementById('testStatus');
+
+    // Run test suites
+    import('./run-tests.js').then(() => {
+      statusEl.textContent = 'All Tests Complete';
+      statusEl.style.borderColor = 'var(--cosy-success)';
+      statusEl.style.color = 'var(--cosy-success)';
+    }).catch(err => {
+      statusEl.textContent = 'Tests Failed';
+      statusEl.style.borderColor = 'var(--cosy-danger)';
+      statusEl.style.color = 'var(--cosy-danger)';
+    });
+  </script>
+</body>
+</html>

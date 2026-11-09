@@ -1,0 +1,108 @@
+/* ==========================================================================
+   CosyUI - Core Design Tokens & Theme Variables
+   Zero external dependencies. High performance, GPU accelerated.
+   ========================================================================== */
+
+:root {
+  /* Surface & Canvas Colors (Default: Cosy Dark) */
+  --cosy-bg-base: #121215;
+  --cosy-bg-surface: #18191f;
+  --cosy-bg-surface-elevated: #21232d;
+  --cosy-bg-card: #282a36;
+  --cosy-bg-card-hover: #333647;
+  --cosy-bg-card-active: #3b3f53;
+  --cosy-border: #353849;
+  --cosy-border-light: #44485e;
+  --cosy-border-focus: #f59e0b;
+
+  /* Typography Colors */
+  --cosy-text-main: #f4f5f9;
+  --cosy-text-muted: #a3a7be;
+  --cosy-text-subtle: #72768e;
+  --cosy-text-inverse: #121215;
+
+  /* Brand Accents */
+  --cosy-accent: #f59e0b;          /* Warm Amber */
+  --cosy-accent-hover: #d97706;
+  --cosy-accent-glow: rgba(245, 158, 11, 0.28);
+  --cosy-accent-secondary: #8b5cf6; /* Royal Indigo / Violet */
+  --cosy-accent-secondary-glow: rgba(139, 92, 246, 0.28);
+
+  /* Status Colors */
+  --cosy-success: #10b981;
+  --cosy-success-glow: rgba(16, 185, 129, 0.25);
+  --cosy-warning: #f59e0b;
+  --cosy-danger: #ef4444;
+  --cosy-danger-glow: rgba(239, 68, 68, 0.25);
+  --cosy-info: #06b6d4;
+
+  /* Socket Port Type Colors (Standardized Universal Palette) */
+  --port-trigger: #ff7a00;         /* Execution Flow: Vivid Flame Orange */
+  --port-trigger-glow: rgba(255, 122, 0, 0.4);
+  --port-string: #10b981;          /* String / Text: Emerald Green */
+  --port-number: #0ea5e9;          /* Number / Math: Sky Blue */
+  --port-boolean: #f43f5e;         /* Boolean: Rose Pink */
+  --port-array: #f97316;           /* Array / List: Tangerine */
+  --port-object: #eab308;          /* Object / JSON: Warm Golden */
+  --port-ui: #a855f7;              /* UI-Element: Electric Violet */
+  --port-any: #94a3b8;             /* Wildcard / Polymorphic: Slate */
+
+  /* UI Dimensions & Radii */
+  --cosy-radius-xs: 4px;
+  --cosy-radius-sm: 6px;
+  --cosy-radius-md: 10px;
+  --cosy-radius-lg: 14px;
+  --cosy-radius-xl: 18px;
+  --cosy-radius-round: 9999px;
+
+  /* Shadows & Depth */
+  --cosy-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --cosy-shadow-card: 0 6px 20px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(255, 255, 255, 0.04) inset;
+  --cosy-shadow-glow: 0 0 18px var(--cosy-accent-glow);
+  --cosy-shadow-modal: 0 20px 45px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.1);
+
+  /* Fonts */
+  --cosy-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --cosy-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Transitions */
+  --cosy-transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --cosy-transition-normal: 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  --cosy-transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Alternate Runtime Themes for Player UI */
+body.theme-cyberpunk {
+  --cosy-bg-base: #0a0a12;
+  --cosy-bg-surface: #111122;
+  --cosy-bg-surface-elevated: #1a1a33;
+  --cosy-bg-card: #1f1f3d;
+  --cosy-border: #ff007f;
+  --cosy-text-main: #00f0ff;
+  --cosy-accent: #00f0ff;
+  --cosy-accent-glow: rgba(0, 240, 255, 0.45);
+  --cosy-accent-secondary: #ff007f;
+}
+
+body.theme-parchment {
+  --cosy-bg-base: #1f1b16;
+  --cosy-bg-surface: #2b251d;
+  --cosy-bg-surface-elevated: #3b3329;
+  --cosy-bg-card: #42392e;
+  --cosy-border: #6b5c48;
+  --cosy-text-main: #f5ecd8;
+  --cosy-text-muted: #c9bc9e;
+  --cosy-accent: #e5a93c;
+  --cosy-accent-glow: rgba(229, 169, 60, 0.35);
+}
+
+body.theme-minimal {
+  --cosy-bg-base: #0f1012;
+  --cosy-bg-surface: #15171a;
+  --cosy-bg-surface-elevated: #1e2025;
+  --cosy-bg-card: #25282e;
+  --cosy-border: #32363e;
+  --cosy-text-main: #ffffff;
+  --cosy-accent: #3b82f6;
+  --cosy-accent-glow: rgba(59, 130, 246, 0.3);
+}
